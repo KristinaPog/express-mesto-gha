@@ -3,6 +3,7 @@ const app = express();
 const mongoose = require('mongoose');
 const userRouter = require('./routes/users.js');
 const cardRouter = require('./routes/cards.js');
+const {STATUS_CODE_NOT_FOUND} = require('./utils/errors.js')
 
 const { PORT = 3000 } = process.env;
 
@@ -17,7 +18,7 @@ app.use((req, res, next) => {
 app.use('/', userRouter);
 app.use('/', cardRouter);
 app.use('*', (req, res) => {
-  res.status(404).json({ message: 'Страница не найдена' });
+  res.status(STATUS_CODE_NOT_FOUND).json({ message: 'Страница не найдена' });
 });
 app.listen(PORT, () => {
   console.log(`App listening on port ${PORT}`);
