@@ -25,7 +25,7 @@ module.exports.deleteCard = (req, res) => {
     .orFail(() => { res.status(STATUS_CODE_NOT_FOUND).send({ message: 'Карточка по указанному _id не найденa' }); return; })
     .then(card => res.status(STATUS_CODE_OK).send(card))
     .catch((err) => {
-      if (err.name === 'CastError') { res.status(STATUS_CODE_NOT_FOUND).send({ message: 'Карточка по указанному _id не найденa' }); return; }
+      if (err.name === 'CastError') { res.status(STATUS_CODE_BAD_REQUEST).send({ message: 'Карточка по указанному _id не найденa' }); return; }
       else { res.status(STATUS_CODE_DEFAULT_ERROR).send({ message: 'Ошибка по умолчанию' }) }
     });
 }
