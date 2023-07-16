@@ -17,10 +17,7 @@ module.exports.createUser = (req, res) => {
 module.exports.getUsers = (req, res) => {
   User.find({})
     .then(users => res.status(STATUS_CODE_OK).send(users))
-    .catch((err) => {
-      if (err.name === 'ValidationError') { res.status(STATUS_CODE_BAD_REQUEST).send({ message: 'Переданы некорректные данные при создании пользователя' }); return; }
-      else { res.status(STATUS_CODE_DEFAULT_ERROR).send({ message: 'Ошибка по умолчанию' }) }
-    });
+    .catch((err) => {res.status(STATUS_CODE_DEFAULT_ERROR).send({ message: 'Ошибка по умолчанию' })});
 }
 
 module.exports.getUser = (req, res) => {
@@ -40,7 +37,6 @@ module.exports.updateUser = (req, res) => {
     .then(user => res.status(STATUS_CODE_OK).send(user))
     .catch((err) => {
       if (err.name === 'ValidationError') { res.status(STATUS_CODE_BAD_REQUEST).send({ message: 'Переданы некорректные данные при обновлении профиля' }); return; }
-      else if (err.name === 'CastError') { res.status(STATUS_CODE_NOT_FOUND).send({ message: 'Пользователь по указанному _id не найден' }); return; }
       else { res.status(STATUS_CODE_DEFAULT_ERROR).send({ message: 'Ошибка по умолчанию' }) }
     });
 }
@@ -52,7 +48,6 @@ module.exports.updateAvatar = (req, res) => {
     .then(user => res.status(STATUS_CODE_OK).send({ data: user }))
     .catch((err) => {
       if (err.name === 'CastError') { res.status(STATUS_CODE_BAD_REQUEST).send({ message: 'Переданы некорректные данные при обновлении профиля' }); return; }
-      else if (err.name === 'ValidationError') { res.status(STATUS_CODE_NOT_FOUND).send({ message: 'Пользователь по указанному _id не найден' }); return; }
       else { res.status(STATUS_CODE_DEFAULT_ERROR).send({ message: 'Ошибка по умолчанию' }) }
     });
 }
