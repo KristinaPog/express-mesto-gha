@@ -15,8 +15,7 @@ module.exports.getCards = (req, res) => {
   Card.find({})
     .then(cards => res.status(STATUS_CODE_OK).send(cards))
     .catch((err) => {
-      if (err.name === 'CastError') { res.status(STATUS_CODE_NOT_FOUND).send({ message: 'Карточка по указанному _id не найденa' }); return; }
-      else { res.status(STATUS_CODE_DEFAULT_ERROR).send({ message: 'Ошибка по умолчанию' }) }
+      res.status(STATUS_CODE_DEFAULT_ERROR).send({ message: 'Ошибка по умолчанию' }) 
     });
 }
 
@@ -38,8 +37,7 @@ module.exports.likeCard = (req, res) => {
   ).orFail(() => { res.status(STATUS_CODE_NOT_FOUND).send({ message: 'Карточка по указанному _id не найденa' }); return; })
     .then(user => res.status(STATUS_CODE_OK).send(user))
     .catch((err) => {
-      if (err.name === 'CastError') { res.status(STATUS_CODE_BAD_REQUEST).send({ message: 'Переданы некорректные данные при создании карточки' }); return; }
-      else if (err.name === 'ValidationError') { res.status(STATUS_CODE_NOT_FOUND).send({ message: 'Карточка по указанному _id не найденa' }); return; }
+      if (err.name === 'CastError') { res.status(STATUS_CODE_BAD_REQUEST).send({ message: 'Переданы некорректные данные' }); return; }
       else { res.status(STATUS_CODE_DEFAULT_ERROR).send({ message: 'Ошибка по умолчанию' }) }
     });
 }
@@ -52,8 +50,7 @@ module.exports.dislikeCard = (req, res) => {
   ).orFail(() => { res.status(STATUS_CODE_NOT_FOUND).send({ message: 'Карточка по указанному _id не найденa' }); return; })
     .then(user => res.status(STATUS_CODE_OK).send(user))
     .catch((err) => {
-      if (err.name === 'CastError') { res.status(STATUS_CODE_BAD_REQUEST).send({ message: 'Переданы некорректные данные при создании карточки' }); return; }
-      else if (err.name === 'ValidationError') { res.status(STATUS_CODE_NOT_FOUND).send({ message: 'Карточка по указанному _id не найденa' }); return; }
+      if (err.name === 'CastError') { res.status(STATUS_CODE_BAD_REQUEST).send({ message: 'Переданы некорректные данные' }); return; }
       else { res.status(STATUS_CODE_DEFAULT_ERROR).send({ message: 'Ошибка по умолчанию' }) }
     });
 }
