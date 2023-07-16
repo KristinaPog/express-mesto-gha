@@ -17,28 +17,7 @@
   "scripts": {
     "lint": "npx eslint",
     "start": "node app.js",
-    "dev": "nodemon app.js",
-    "build": "react-scripts build",
-    "test": "react-scripts test",
-    "eject": "react-scripts eject"
-  },
-  "eslintConfig": {
-    "extends": [
-      "react-app",
-      "react-app/jest"
-    ]
-  },
-  "browserslist": {
-    "production": [
-      ">0.2%",
-      "not dead",
-      "not op_mini all"
-    ],
-    "development": [
-      "last 1 chrome version",
-      "last 1 firefox version",
-      "last 1 safari version"
-    ]
+    "dev": "nodemon app.js"
   },
   "devDependencies": {
     "eslint": "^8.44.0",
@@ -48,8 +27,8 @@
     "nodemon": "^2.0.22"
   },
   "description": "[![Tests](../../actions/workflows/tests-13-sprint.yml/badge.svg)](../../actions/workflows/tests-13-sprint.yml) [![Tests](../../actions/workflows/tests-14-sprint.yml/badge.svg)](../../actions/workflows/tests-14-sprint.yml)\r # Проект Mesto фронтенд + бэкенд",
-  "main": ".eslintrc.js",
+  "main": "app.js",
   "keywords": [],
-  "author": "",
+  "author": "Kristina Pogodina",
   "license": "ISC"
 }

@@ -15,7 +15,7 @@ module.exports.getCards = (req, res) => {
   Card.find({})
     .then(cards => res.status(STATUS_CODE_OK).send(cards))
     .catch((err) => {
-      if (err.name === 'ValidationError') { res.status(STATUS_CODE_BAD_REQUEST).send({ message: 'Переданы некорректные данные при создании карточки' }); return; }
+      if (err.name === 'CastError') { res.status(STATUS_CODE_NOT_FOUND).send({ message: 'Карточка по указанному _id не найденa' }); return; }
       else { res.status(STATUS_CODE_DEFAULT_ERROR).send({ message: 'Ошибка по умолчанию' }) }
     });
 }
