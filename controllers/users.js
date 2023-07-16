@@ -42,8 +42,8 @@ module.exports.updateUser = (req, res) => {
 }
 
 module.exports.updateAvatar = (req, res) => {
-  const avatar = req.body;
-  User.findByIdAndUpdate(req.user._id, avatar, { new: true, runValidators: true })
+  const { avatar } = req.body;
+  User.findByIdAndUpdate(req.user._id, { avatar }, { new: true, runValidators: true })
     .orFail(() => { res.status(STATUS_CODE_NOT_FOUND).send({ message: 'Пользователь по указанному _id не найден' }); return; })
     .then(user => res.status(STATUS_CODE_OK).send(user))
     .catch((err) => {
