@@ -28,7 +28,7 @@ module.exports.createUser = (req, res) => {
     }))
     .catch(
       (err) => {
-        if (err.name === 'ValidationError') { res.status(STATUS_CODE_BAD_REQUEST).send({ message: 'Переданы некорректные данные при создании пользователя' }); } else if (err.code === 11000) {res.status(409).send({ message: 'Ошибка сервера' }); } else { res.status(STATUS_CODE_DEFAULT_ERROR).send({ message: 'Ошибка сервера' }); }
+        if (err.name === 'ValidationError') { res.status(STATUS_CODE_BAD_REQUEST).send({ message: 'Переданы некорректные данные при создании пользователя' }); } else if (err.code === 11000) { res.status(409).send({ message: 'Ошибка сервера' }); } else { res.status(STATUS_CODE_DEFAULT_ERROR).send({ message: 'Ошибка сервера' }); }
       },
     );
 };
