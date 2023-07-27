@@ -21,7 +21,6 @@ module.exports.createUser = (req, res) => {
     }))
     .then((user) => res.status(STATUS_CODE_CREATED).send({
       email: user.email,
-      password: user.password,
       name: user.name,
       about: user.about,
       avatar: user.avatar,
