@@ -7,12 +7,12 @@ const userRouter = require('./routes/users');
 const { login, createUser } = require('./controllers/users');
 const cardRouter = require('./routes/cards');
 const auth = require('./middlewares/auth');
-const { STATUS_CODE_NOT_FOUND } = require('./utils/errors');
+const { STATUS_CODE_NOT_FOUND, STATUS_CODE_DEFAULT_ERROR} = require('./utils/errors');
 
 const { PORT = 3000 } = process.env;
 mongoose.connect('mongodb://127.0.0.1:27017/mestodb');
 app.use(express.json());
-app.use(errors());
+
 app.post('/signup', celebrate({
   body: Joi.object().keys({
     email: Joi.string().required().email({ tlds: { allow: false } }),
@@ -34,4 +34,11 @@ app.use('/cards', cardRouter);
 app.use('*', (req, res) => {
   res.status(STATUS_CODE_NOT_FOUND).json({ message: 'Страница не найдена' });
 });
+
+app.use(errors());
+app.use((err, req, res, next) => {
+  res.status(STATUS_CODE_DEFAULT_ERROR).send({ message: 'На сервере произошла ошибка' });
+  next();
+});
+
 app.listen(PORT);
