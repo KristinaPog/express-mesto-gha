@@ -25,7 +25,12 @@ module.exports.createUser = (req, res) => {
       about: user.about,
       avatar: user.avatar,
       _id: user._id,
-    }));
+    }))
+    .catch(
+      (err) => {
+        if (err.name === 'ValidationError') { res.status(STATUS_CODE_BAD_REQUEST).send({ message: 'Переданы некорректные данные при создании пользователя' }); } else { res.status(STATUS_CODE_DEFAULT_ERROR).send({ message: 'Ошибка сервера' }); }
+      },
+    );
 };
 
 module.exports.login = (req, res) => {
