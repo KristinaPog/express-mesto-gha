@@ -42,7 +42,7 @@ module.exports.login = (req, res) => {
         'some-secret-key',
         { expiresIn: '7d' },
       );
-      res.send({ token });
+      res.status(STATUS_CODE_OK).send({ token });
     })
     .catch(() => {
       res
