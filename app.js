@@ -7,7 +7,7 @@ const userRouter = require('./routes/users');
 const { login, createUser } = require('./controllers/users');
 const cardRouter = require('./routes/cards');
 const auth = require('./middlewares/auth');
-const { STATUS_CODE_NOT_FOUND, STATUS_CODE_DEFAULT_ERROR} = require('./utils/errors');
+const { STATUS_CODE_NOT_FOUND, STATUS_CODE_DEFAULT_ERROR } = require('./utils/errors');
 
 const { PORT = 3000 } = process.env;
 mongoose.connect('mongodb://127.0.0.1:27017/mestodb');
