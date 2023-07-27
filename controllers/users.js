@@ -1,3 +1,5 @@
+const bcrypt = require('bcryptjs');
+const jwt = require('jsonwebtoken');
 const User = require('../models/user');
 
 const {
@@ -8,10 +10,34 @@ const {
   STATUS_CODE_DEFAULT_ERROR,
 } = require('../utils/errors');
 
+module.exports.login = (req, res) => {
+  const { email, password } = req.body;
+  return User.findUserByCredentials(email, password)
+    .then((user) => {
+      const token = jwt.sign(
+        { _id: user._id },
+        'some-secret-key',
+        { expiresIn: '7d' },
+      );
+      res.send({ token });
+    })
+    .catch(() => {
+      res
+        .status(401)
+        .send({ message: 'Переданы некорректные данные' });
+    });
+};
+
 module.exports.createUser = (req, res) => {
-  const { name, about, avatar } = req.body;
-  User.create({ name, about, avatar })
-    .then((user) => res.status(STATUS_CODE_CREATED).send({ data: user }))
+  bcrypt.hash(req.body.password, 10)
+    .then((hash) => User.create({
+      email: req.body.email,
+      password: hash,
+      name: req.body.name,
+      about: req.body.about,
+      avatar: req.body.avatar,
+    }))
+    .then((user) => res.status(STATUS_CODE_CREATED).send(user))
     .catch(
       (err) => {
         if (err.name === 'ValidationError') { res.status(STATUS_CODE_BAD_REQUEST).send({ message: 'Переданы некорректные данные при создании пользователя' }); } else { res.status(STATUS_CODE_DEFAULT_ERROR).send({ message: 'Ошибка по умолчанию' }); }
@@ -26,7 +52,16 @@ module.exports.getUsers = (req, res) => {
 };
 
 module.exports.getUser = (req, res) => {
-  User.findById(req.params.id)
+  User.findById(req.user._id)
+    .orFail(() => { res.status(STATUS_CODE_NOT_FOUND).send({ message: 'Пользователь по указанному _id не найден' }); })
+    .then((user) => res.status(STATUS_CODE_OK).send(user))
+    .catch((err) => {
+      if (err.name === 'CastError') { res.status(STATUS_CODE_BAD_REQUEST).send({ message: 'Переданы некорректные данные' }); } else { res.status(STATUS_CODE_DEFAULT_ERROR).send({ message: 'Ошибка по умолчанию' }); }
+    });
+};
+
+module.exports.getMe = (req, res) => {
+  User.findById(req.user._id)
     .orFail(() => { res.status(STATUS_CODE_NOT_FOUND).send({ message: 'Пользователь по указанному _id не найден' }); })
     .then((user) => res.status(STATUS_CODE_OK).send(user))
     .catch((err) => {
