@@ -10,6 +10,24 @@ const {
   STATUS_CODE_DEFAULT_ERROR,
 } = require('../utils/errors');
 
+module.exports.createUser = (req, res) => {
+  bcrypt.hash(req.body.password, 10)
+    .then((hash) => User.create({
+      email: req.body.email,
+      password: hash,
+      name: req.body.name,
+      about: req.body.about,
+      avatar: req.body.avatar,
+    }))
+    .then((user) => res.status(STATUS_CODE_CREATED).send({
+      email: user.email,
+      name: user.name,
+      about: user.about,
+      avatar: user.avatar,
+      _id: user._id,
+    }));
+};
+
 module.exports.login = (req, res) => {
   const { email, password } = req.body;
   return User.findUserByCredentials(email, password)
@@ -26,23 +44,6 @@ module.exports.login = (req, res) => {
         .status(401)
         .send({ message: 'Переданы некорректные данные' });
     });
-};
-
-module.exports.createUser = (req, res) => {
-  bcrypt.hash(req.body.password, 10)
-    .then((hash) => User.create({
-      email: req.body.email,
-      password: hash,
-      name: req.body.name,
-      about: req.body.about,
-      avatar: req.body.avatar,
-    }))
-    .then((user) => res.status(STATUS_CODE_CREATED).send(user))
-    .catch(
-      (err) => {
-        if (err.name === 'ValidationError') { res.status(STATUS_CODE_BAD_REQUEST).send({ message: 'Переданы некорректные данные при создании пользователя' }); } else { res.status(STATUS_CODE_DEFAULT_ERROR).send({ message: 'Ошибка по умолчанию' }); }
-      },
-    );
 };
 
 module.exports.getUsers = (req, res) => {
