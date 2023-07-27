@@ -2,7 +2,7 @@ const express = require('express');
 
 const app = express();
 const mongoose = require('mongoose');
-const { celebrate, Joi } = require('celebrate');
+const { celebrate, Joi, errors } = require('celebrate');
 const userRouter = require('./routes/users');
 const { login, createUser } = require('./controllers/users');
 const cardRouter = require('./routes/cards');
@@ -12,6 +12,7 @@ const { STATUS_CODE_NOT_FOUND } = require('./utils/errors');
 const { PORT = 3000 } = process.env;
 mongoose.connect('mongodb://127.0.0.1:27017/mestodb');
 app.use(express.json());
+app.use(errors());
 app.post('/signup', celebrate({
   body: Joi.object().keys({
     email: Joi.string().required().email({ tlds: { allow: false } }),
