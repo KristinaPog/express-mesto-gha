@@ -32,7 +32,7 @@ module.exports.deleteCard = (req, res) => {
       const owner = card.owner.toString();
       if (req.user._id === owner) {
         Card.deleteOne(card).then(res.status(STATUS_CODE_OK).send(card));
-      }
+      } else { res.status(403).send({ message: 'Эта карточка принадлежит другому пользователю' }); }
     })
     .catch((err) => {
       if (err.name === 'CastError') { res.status(STATUS_CODE_BAD_REQUEST).send({ message: 'Карточка по указанному _id не найденa' }); } else { res.status(STATUS_CODE_DEFAULT_ERROR).send({ message: 'Ошибка по умолчанию' }); }
