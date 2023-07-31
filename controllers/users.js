@@ -33,22 +33,14 @@ module.exports.createUser = (req, res) => {
     );
 };
 
-module.exports.login = (req, res) => {
+module.exports.login = (req, res, next) => {
   const { email, password } = req.body;
   return User.findUserByCredentials(email, password)
     .then((user) => {
-      const token = jwt.sign(
-        { _id: user._id },
-        'some-secret-key',
-        { expiresIn: '7d' },
-      );
+      const token = jwt.sign({ _id: user._id }, 'some-secret-key', { expiresIn: '7d' });
       res.status(STATUS_CODE_OK).send({ token });
     })
-    .catch(() => {
-      res
-        .status(401)
-        .send({ message: 'Переданы некорректные данные' });
-    });
+    .catch(next);
 };
 
 module.exports.getUsers = (req, res) => {
@@ -58,7 +50,7 @@ module.exports.getUsers = (req, res) => {
 };
 
 module.exports.getUser = (req, res) => {
-  User.findById(req.user._id)
+  User.findById(req.params.id)
     .orFail(() => { res.status(STATUS_CODE_NOT_FOUND).send({ message: 'Пользователь по указанному _id не найден' }); })
     .then((user) => res.status(STATUS_CODE_OK).send(user))
     .catch((err) => {
@@ -67,7 +59,8 @@ module.exports.getUser = (req, res) => {
 };
 
 module.exports.getMe = (req, res) => {
-  User.findById(req.user._id)
+  const userId = req.user._id;
+  User.findById(userId)
     .orFail(() => { res.status(STATUS_CODE_NOT_FOUND).send({ message: 'Пользователь по указанному _id не найден' }); })
     .then((user) => res.status(STATUS_CODE_OK).send(user))
     .catch((err) => {
