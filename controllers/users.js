@@ -33,7 +33,7 @@ module.exports.createUser = (req, res) => {
     );
 };
 
-module.exports.login = (req, res, next) => {
+module.exports.login = (req, res) => {
   const { email, password } = req.body;
   return User.findUserByCredentials(email, password)
     .then((user) => {
