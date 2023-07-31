@@ -40,7 +40,7 @@ module.exports.login = (req, res, next) => {
       const token = jwt.sign({ _id: user._id }, 'some-secret-key', { expiresIn: '7d' });
       res.status(STATUS_CODE_OK).send({ token });
     })
-    .catch(next);
+    .catch(() => { res.status(401).send({ message: 'Необходима авторизация' }); });
 };
 
 module.exports.getUsers = (req, res) => {
