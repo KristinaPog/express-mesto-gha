@@ -14,7 +14,7 @@ module.exports.createCard = (req, res, next) => {
   Card.create({ name, link, owner })
     .then((card) => res.status(STATUS_CODE_CREATED).send({ card }))
     .catch((err) => {
-      if (err.name === 'ValidationError') { next(new BadRequest({ message: 'Переданы некорректные данные при создании карточки' })); } else { next(err); }
+      if (err.name === 'ValidationError') { next(new BadRequest('Переданы некорректные данные при создании карточки')); } else { next(err); }
     });
 };
 
@@ -22,18 +22,18 @@ module.exports.getCards = (req, res, next) => {
   Card.find({})
     .then((cards) => res.status(STATUS_CODE_OK).send(cards))
     .catch(() => {
-      next(new NotFound({ message: 'Ошибка по умолчанию' }));
+      next(new NotFound('Ошибка по умолчанию'));
     });
 };
 
 module.exports.deleteCard = (req, res, next) => {
+  const owner = req.user._id;
   Card.findById(req.params.cardId)
     .then((card) => {
-      if (!card) { next(new NotFound({ message: 'Карточка по указанному _id не найденa' })); }
-      const owner = card.owner.toString();
-      if (req.user._id === owner) {
+      if (!card) { next(new NotFound('Карточка по указанному _id не найденa')); }
+      if (card.owner.toString() === owner) {
         card.remove().then(res.status(STATUS_CODE_OK).send(card));
-      } else { next(new Forbitten({ message: 'Эта карточка принадлежит другому пользователю' })); }
+      } else { next(new Forbitten('Эта карточка принадлежит другому пользователю')); }
     })
     .catch((err) => { next(err); });
 };
@@ -43,10 +43,10 @@ module.exports.likeCard = (req, res, next) => {
     req.params.cardId,
     { $addToSet: { likes: req.user._id } },
     { new: true },
-  ).orFail(() => { next(new NotFound({ message: 'Карточка по указанному _id не найденa' })); })
+  ).orFail(() => { next(new NotFound('Карточка по указанному _id не найденa')); })
     .then((user) => res.status(STATUS_CODE_OK).send(user))
     .catch((err) => {
-      if (err.name === 'CastError') { next(new BadRequest({ message: 'Переданы некорректные данные' })); } else { next(err); }
+      if (err.name === 'CastError') { next(new BadRequest('Переданы некорректные данные')); } else { next(err); }
     });
 };
 
@@ -58,6 +58,6 @@ module.exports.dislikeCard = (req, res, next) => {
   ).orFail(() => { next(new NotFound({ message: 'Карточка по указанному _id не найденa' })); })
     .then((user) => res.status(STATUS_CODE_OK).send(user))
     .catch((err) => {
-      if (err.name === 'CastError') { next(new BadRequest({ message: 'Переданы некорректные данные' })); } else { next(err); }
+      if (err.name === 'CastError') { next(new BadRequest('Переданы некорректные данные')); } else { next(err); }
     });
 };
