@@ -9,7 +9,6 @@ const {
 
 const BadRequest = require('../errors/badRequest');
 const Conflict = require('../errors/conflict');
-const Unautorized = require('../errors/unautorized');
 const NotFound = require('../errors/notFound');
 
 module.exports.createUser = (req, res, next) => {
@@ -30,7 +29,7 @@ module.exports.createUser = (req, res, next) => {
     }))
     .catch(
       (err) => {
-        if (err.name === 'ValidationError') { next(new BadRequest({ message: 'Переданы некорректные данные при создании пользователя' })); } else if (err.code === 11000) { next(new Conflict({ message: 'Ошибка сервера' })); } else { next(err); }
+        if (err.name === 'ValidationError') { next(new BadRequest('Переданы некорректные данные при создании пользователя')); } else if (err.code === 11000) { next(new Conflict('Ошибка сервера')); } else { next(err); }
       },
     );
 };
@@ -42,7 +41,7 @@ module.exports.login = (req, res, next) => {
       const token = jwt.sign({ _id: user._id }, 'some-secret-key', { expiresIn: '7d' });
       res.status(STATUS_CODE_OK).send({ token });
     })
-    .catch(() => { next(new Unautorized({ message: 'Необходима авторизация' })); });
+    .catch((err) => { next(err); });
 };
 
 module.exports.getUsers = (req, res, next) => {
@@ -53,17 +52,17 @@ module.exports.getUsers = (req, res, next) => {
 
 module.exports.getUser = (req, res, next) => {
   User.findById(req.params.id)
-    .orFail(() => { next(new NotFound({ message: 'Пользователь по указанному _id не найден' })); })
+    .orFail(() => { next(new NotFound('Пользователь по указанному _id не найден')); })
     .then((user) => res.status(STATUS_CODE_OK).send(user))
     .catch((err) => {
-      if (err.name === 'CastError') { next(new BadRequest({ message: 'Переданы некорректные данные' })); } else { next(err); }
+      if (err.name === 'CastError') { next(new BadRequest('Переданы некорректные данные')); } else { next(err); }
     });
 };
 
 module.exports.getMe = (req, res, next) => {
   const userId = req.user._id;
   User.findById(userId)
-    .orFail(() => { next(new NotFound({ message: 'Пользователь по указанному _id не найден' })); })
+    .orFail(() => { next(new NotFound('Пользователь по указанному _id не найден')); })
     .then((user) => res.status(STATUS_CODE_OK).send(user))
     .catch((err) => { next(err); });
 };
@@ -71,10 +70,10 @@ module.exports.getMe = (req, res, next) => {
 module.exports.updateUser = (req, res, next) => {
   const { name, about } = req.body;
   User.findByIdAndUpdate(req.user._id, { name, about }, { new: true, runValidators: true })
-    .orFail(() => { next(new NotFound({ message: 'Пользователь по указанному _id не найден' })); })
+    .orFail(() => { next(new NotFound('Пользователь по указанному _id не найден')); })
     .then((user) => res.status(STATUS_CODE_OK).send(user))
     .catch((err) => {
-      if (err.name === 'ValidationError') { next(new BadRequest({ message: 'Переданы некорректные данные при обновлении профиля' })); } else { next(err); }
+      if (err.name === 'ValidationError') { next(new BadRequest('Переданы некорректные данные при обновлении профиля')); } else { next(err); }
     });
 };
 
@@ -84,6 +83,6 @@ module.exports.updateAvatar = (req, res, next) => {
     .orFail(() => { next(new NotFound({ message: 'Пользователь по указанному _id не найден' })); })
     .then((user) => res.status(STATUS_CODE_OK).send(user))
     .catch((err) => {
-      if (err.name === 'ValidationError') { next(new BadRequest({ message: 'Переданы некорректные данные при обновлении профиля' })); } else { next(err); }
+      if (err.name === 'ValidationError') { next(new BadRequest('Переданы некорректные данные при обновлении профиля')); } else { next(err); }
     });
 };

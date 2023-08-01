@@ -21,9 +21,7 @@ module.exports.createCard = (req, res, next) => {
 module.exports.getCards = (req, res, next) => {
   Card.find({})
     .then((cards) => res.status(STATUS_CODE_OK).send(cards))
-    .catch(() => {
-      next(new NotFound('Ошибка по умолчанию'));
-    });
+    .catch((err) => { next(err); });
 };
 
 module.exports.deleteCard = (req, res, next) => {
