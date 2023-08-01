@@ -32,7 +32,7 @@ module.exports.deleteCard = (req, res, next) => {
     .then((card) => {
       const owner = card.owner.toString();
       if (req.user._id === owner) {
-        card.remove().then(res.status(STATUS_CODE_OK).send({ message: 'Карточка удалена' }));
+        Card.findByIdAndRemove(req.params.cardId).then(res.status(STATUS_CODE_OK).send({ message: 'Карточка удалена' }));
       } else { next(new Forbitten({ message: 'Эта карточка принадлежит другому пользователю' })); }
     })
     .catch((err) => {
