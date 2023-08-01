@@ -9,6 +9,7 @@ const {
 
 const BadRequest = require('../errors/badRequest');
 const Conflict = require('../errors/conflict');
+const Unautorized = require('../errors/unautorized');
 const NotFound = require('../errors/notFound');
 
 module.exports.createUser = (req, res, next) => {
@@ -41,7 +42,7 @@ module.exports.login = (req, res, next) => {
       const token = jwt.sign({ _id: user._id }, 'some-secret-key', { expiresIn: '7d' });
       res.status(STATUS_CODE_OK).send({ token });
     })
-    .catch((err) => { next(err); });
+    .catch(next);
 };
 
 module.exports.getUsers = (req, res, next) => {
