@@ -7,7 +7,7 @@ const userRouter = require('./routes/users');
 const { login, createUser } = require('./controllers/users');
 const cardRouter = require('./routes/cards');
 const auth = require('./middlewares/auth');
-const { STATUS_CODE_NOT_FOUND, STATUS_CODE_DEFAULT_ERROR } = require('./utils/errors');
+const { STATUS_CODE_DEFAULT_ERROR } = require('./errors/errors');
 
 const { PORT = 3000 } = process.env;
 mongoose.connect('mongodb://127.0.0.1:27017/mestodb');
@@ -31,13 +31,15 @@ app.post('/signin', celebrate({
 app.use(auth);
 app.use('/users', userRouter);
 app.use('/cards', cardRouter);
-app.use('*', (req, res) => {
-  res.status(STATUS_CODE_NOT_FOUND).json({ message: 'Страница не найдена' });
+app.use('*', (req, res, next) => {
+  next(new Error({ message: 'Страница не найдена' }));
 });
 
 app.use(errors());
 app.use((err, req, res, next) => {
-  res.status(STATUS_CODE_DEFAULT_ERROR).send({ message: 'На сервере произошла ошибка' });
+  if (err.statusCode) {
+    res.status(err.statusCode).send({ message: err.message });
+  } else { res.status(STATUS_CODE_DEFAULT_ERROR).send({ message: 'На сервере произошла ошибка' }); }
   next();
 });
 
