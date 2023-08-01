@@ -29,7 +29,7 @@ module.exports.getCards = (req, res, next) => {
 module.exports.deleteCard = (req, res, next) => {
   Card.findById(req.params.cardId)
     .orFail(() => {
-      next(new NotFound('Карточка с указанным _id не найдена'));
+      next(new NotFound('Карточка не найдена'));
     })
     .then((card) => {
       const owner = card.owner.toString();
@@ -45,7 +45,7 @@ module.exports.deleteCard = (req, res, next) => {
     })
     .catch((err) => {
       if (err.name === 'CastError') {
-        next(new BadRequest('Переданы некорректные данные удаления'));
+        next(new BadRequest('Неверный запрос'));
       } else {
         next(err);
       }
