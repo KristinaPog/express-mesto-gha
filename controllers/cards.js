@@ -27,12 +27,12 @@ module.exports.getCards = (req, res, next) => {
 };
 
 module.exports.deleteCard = (req, res, next) => {
-  Card.findById(req.params.cardId, { runValidators: true })
+  Card.findByIdAndRemove(req.params.cardId, { runValidators: true })
     .orFail(() => { next(new NotFound({ message: 'Карточка по указанному _id не найденa' })); })
     .then((card) => {
       const owner = card.owner.toString();
       if (req.user._id === owner) {
-        Card.findByIdAndRemove(req.params.cardId).then(res.status(STATUS_CODE_OK).send({ message: 'Карточка удалена' }));
+        card.remove().then(res.status(STATUS_CODE_OK).send({ message: 'Карточка удалена' }));
       } else { next(new Forbitten({ message: 'Эта карточка принадлежит другому пользователю' })); }
     })
     .catch((err) => {
