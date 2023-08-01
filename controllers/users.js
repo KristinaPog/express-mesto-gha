@@ -9,7 +9,7 @@ const {
 
 const BadRequest = require('../errors/badRequest');
 const Conflict = require('../errors/conflict');
-const Unautorized = require('../errors/unautorized');
+// const Unautorized = require('../errors/unautorized');
 const NotFound = require('../errors/notFound');
 
 module.exports.createUser = (req, res, next) => {
