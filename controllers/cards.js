@@ -28,16 +28,14 @@ module.exports.getCards = (req, res, next) => {
 
 module.exports.deleteCard = (req, res, next) => {
   Card.findById(req.params.cardId)
-    .orFail(() => { next(new NotFound({ message: 'Карточка по указанному _id не найденa' })); })
     .then((card) => {
+      if (!card) { next(new NotFound({ message: 'Карточка по указанному _id не найденa' })); }
       const owner = card.owner.toString();
       if (req.user._id === owner) {
-        Card.deleteOne(card).then(res.status(STATUS_CODE_OK).send(card));
+        card.remove().then(res.status(STATUS_CODE_OK).send(card));
       } else { next(new Forbitten({ message: 'Эта карточка принадлежит другому пользователю' })); }
     })
-    .catch((err) => {
-      if (err.name === 'CastError') { next(new BadRequest({ message: 'Карточка по указанному _id не найденa' })); } else { next(err); }
-    });
+    .catch((err) => { next(err); });
 };
 
 module.exports.likeCard = (req, res, next) => {
