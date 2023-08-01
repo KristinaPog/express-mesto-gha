@@ -36,11 +36,11 @@ module.exports.deleteCard = (req, res, next) => {
       if (req.user._id === owner) {
         Card.deleteOne(card)
           .then(() => {
-            res.send(card);
+            res.status(STATUS_CODE_OK).send(card);
           })
           .catch(next);
       } else {
-        next(new Forbidden('Невозможно удалить карточку'));
+        next(new Forbidden('Данная карточка принадлежит другому пользователю'));
       }
     })
     .catch((err) => {
