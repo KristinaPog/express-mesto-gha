@@ -6,6 +6,7 @@ const {
 
 const BadRequest = require('../errors/badRequest');
 const NotFound = require('../errors/notFound');
+const Forbitten = require('../errors/forbitten');
 
 module.exports.createCard = (req, res, next) => {
   const { name, link } = req.body;
@@ -31,8 +32,8 @@ module.exports.deleteCard = (req, res, next) => {
     .then((card) => {
       const owner = card.owner.toString();
       if (req.user._id === owner) {
-        Card.deleteOne(card).then(res.status(STATUS_CODE_OK).send(card));
-      } else { res.status(403).send({ message: 'Эта карточка принадлежит другому пользователю' }); }
+        card.remove().then(res.status(STATUS_CODE_OK).send({ message: 'Карточка удалена' }));
+      } else { next(new Forbitten({ message: 'Эта карточка принадлежит другому пользователю' })); }
     })
     .catch((err) => {
       if (err.name === 'CastError') { next(new BadRequest({ message: 'Карточка по указанному _id не найденa' })); } else { next(err); }
